@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Project Manager {% endblock %}
+{% block css %} {% static "css/index.css" %} {% endblock %}
+
+{% block body %}
+      <form class="row">
+        <div class="col-10">
+          <input
+            type="text"
+            class="form-control  align-middle"
+            id="searchProject"
+            placeholder="Search Project, then press Enter"
+          />
+        </div>
+        <div class="col-2 d-grid">
+          <button type="button" class="btn btn-success btn-lg">
+            + Add Project
+          </button>
+        </div>
+      </form>
+      <hr class="border-2 border-black opacity-100" />
+      {% if count > 0 %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">&nbsp;</th>
+            <th scope="col">Project</th>
+            <th scope="col text-center">Status</th>
+            <th scope="col text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for project in projects %}
+          <tr>
+            <th class="align-middle" scope="row"><input class="form-check-input" type="checkbox" value=""></th>
+            <td class="align-middle"><a href="{% url "project" project.ord %}" class="fw-bold text-decoration-none">{{project.ord}} - {{project.project_name}}</a></td>
+            <td class="align-middle"><span class="badge rounded-pill 
+              {% if project.status == "Headsup" %} text-bg-secondary {% endif %}
+              {% if project.status == "Programming" %} text-bg-primary {% endif %}
+              {% if project.status == "Live" %} text-bg-success {% endif %}
+              {% if project.status == "Closed" %} text-bg-danger {% endif %}
+            ">{{project.status|upper}}</span></td>
+            <td class="align-middle"><div class="dropdown">
+              <button class="px-3 py-1 btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                ...
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Edit Project</a></li>
+                <li><a class="dropdown-item" href="#">Delete Project</a></li>
+              </ul>
+            </div></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+      {% if count == 0 %}
+      <div class="text-center">
+        <h1>No projects</h1>
+        <p>Refine your search, or click the "Add Project" button</p>
+      </div>
+      {% endif %}
+{% endblock %}
