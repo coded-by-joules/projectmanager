@@ -1,3 +1,6 @@
 # ignore folders
 __pycache__
 migrations
+
+# ignore files
+testing.py

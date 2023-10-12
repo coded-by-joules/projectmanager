@@ -5,6 +5,8 @@
 {% block css %} {% static "css/index.css" %} {% endblock %}
 
 {% block body %}
+
+
       <form class="row">
         <div class="col-10">
           <input
@@ -15,11 +17,19 @@
           />
         </div>
         <div class="col-2 d-grid">
-          <button type="button" class="btn btn-success btn-lg">
+          <a role="button" class="btn btn-success" href="{% url "newproject" %}">
             + Add Project
-          </button>
+          </a>
         </div>
       </form>
+      {% if messages %}
+
+      <div class="alert alert-success mt-2" role="alert">      
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+      </div>
+      {% endif %}
       <hr class="border-2 border-black opacity-100" />
       {% if count > 0 %}
       <table class="table">
@@ -39,6 +49,7 @@
             <td class="align-middle"><span class="badge rounded-pill 
               {% if project.status == "Headsup" %} text-bg-secondary {% endif %}
               {% if project.status == "Programming" %} text-bg-primary {% endif %}
+              {% if project.status == "Changes" %} text-bg-warning {% endif %}
               {% if project.status == "Live" %} text-bg-success {% endif %}
               {% if project.status == "Closed" %} text-bg-danger {% endif %}
             ">{{project.status|upper}}</span></td>
