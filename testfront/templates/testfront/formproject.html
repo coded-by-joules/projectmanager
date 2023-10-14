@@ -9,7 +9,7 @@
 
 <form class="my-4" method="POST" novalidate>
   {% csrf_token %}
-  <fieldset class="border p-3 rounded">
+  <fieldset class="border p-3 rounded shadow">
     <h4>Basic Info</h4>
     <hr />
     <div class="row mb-3">
@@ -98,29 +98,29 @@
           </div>
           {% endif %}                 
         </div>
-      </div>
-      <div class="row mb-3">
-        <label for="{{ form.eta.id_for_label }}" class="col-form-label fw-bold col-sm-2"
-          >Test Link ETA</label
-        >
-        <div class="col-sm-10">
-          {{ form.eta }}
-          {% if form.eta.errors %}
-          <div class="alert alert-danger mt-2" role="alert">
-            <ul class="list-unstyled my-0">
-              {% for error in form.eta.errors %}
-              <li>{{error}}</li>
-              {% endfor %}
-            </ul>
-          </div>
-          {% endif %}              
-        </div>
-      </div>
+      </div>      
   </fieldset>
 
-  <fieldset class="my-3 border p-3 rounded">
+  <fieldset class="my-3 border p-3 rounded shadow">
     <h4>Additional Info</h4>
     <hr/>
+    <div class="row mb-3">
+      <label for="{{ form.eta.id_for_label }}" class="col-form-label fw-bold col-sm-2"
+        >Test Link ETA</label
+      >
+      <div class="col-sm-10">
+        {{ form.eta }}
+        {% if form.eta.errors %}
+        <div class="alert alert-danger mt-2" role="alert">
+          <ul class="list-unstyled my-0">
+            {% for error in form.eta.errors %}
+            <li>{{error}}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}              
+      </div>
+    </div>
     <div class="row mb-3">
         <label for="{{ form.pid.id_for_label }}" class="col-form-label fw-bold col-sm-2"
             >Project ID</label
@@ -139,15 +139,15 @@
         </div>
     </div>
     <div class="row mb-3">
-        <label for="{{ form.markets.id_for_label }}" class="col-form-label fw-bold col-sm-2"
-            >Markets</label
+        <label for="{{ form.details.id_for_label }}" class="col-form-label fw-bold col-sm-2"
+            >Project Details</label
         >
         <div class="col-sm-10">
-          {{ form.markets }}
-          {% if form.markets.errors %}
+          {{ form.details }}
+          {% if form.details.errors %}
           <div class="alert alert-danger mt-2" role="alert">
             <ul class="list-unstyled my-0">
-              {% for error in form.markets.errors %}
+              {% for error in form.details.errors %}
               <li>{{error}}</li>
               {% endfor %}
             </ul>

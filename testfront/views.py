@@ -27,23 +27,14 @@ def newproject(request):
     else:
        form = ProjectForm(request.POST)
        if form.is_valid():
-           project = Project(
-               ord = form.cleaned_data["ord"],
-               project_name = form.cleaned_data["project_name"],
-               status = form.cleaned_data["status"],
-               region = form.cleaned_data["region"],
-               pid = form.cleaned_data["pid"],
-               platform = form.cleaned_data["platform"],
-               markets = form.cleaned_data["markets"],
-               hours = form.cleaned_data["hours"],
-               eta = form.cleaned_data["eta"]
-           )
-           project.save()
+           form.save()
            messages.success(request, "Project added succesfully")
-
-           return redirect("/")
+           return redirect("projects/")
        else:
            print("Form is invalid")
            return render(request, "testfront/formproject.html", {
             "form": form
            })
+
+def projectedit(request, project_ord):
+    return render(request, "testfront/formproject.html")
