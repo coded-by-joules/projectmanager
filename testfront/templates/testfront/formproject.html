@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} Project Manager {%endblock %}
+{% block title %} {{formText}} Project - Project Manager {%endblock %}
 {% block css %} {% static "css/index.css" %} {% endblock %}
 
 {% block body %}
-<h2>New Project</h2>
+<h2>{{formText}} Project</h2>
 
 <form class="my-4" method="POST" novalidate>
   {% csrf_token %}
@@ -157,6 +157,7 @@
     </div>
   </fieldset>
 
-  <button type="submit" class="btn btn-primary">Add Project</button>
+  <button type="submit" class="btn btn-primary">{{formText}} Project</button>
+  
 </form>
 {% endblock %}

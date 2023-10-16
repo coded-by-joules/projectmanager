@@ -19,14 +19,33 @@ def generate_unique_code():
     return code
 
 # eta validator
-def validate_eta(value):
-   if value not in ["",None]:
-        data = datetime.strptime(str(value), "%Y-%m-%d %H:%M:%S%z")
-        nowdata = datetime.now() + timedelta(hours=1)
-        now = pytz.utc.localize(nowdata)   
+# @deconstructible
+# class EtaValidator:
+#     oldeta = None
 
-        if (now > data):
-           raise ValidationError("Please enter an ETA at least an hour from today")   
+#     def __init__(self, oldeta=None):
+#         if oldeta is not None:
+#            self.oldeta = oldeta
+
+#     def __call__(self, value):
+#         print(f"old eta: {self.oldeta}")
+#         print(f"new eta: {value}")
+#         if self.oldeta is not None:
+#             if value != self.oldeta:
+#               raise ValidationError("Please don't change ETA")
+        
+#         # data = datetime.strptime(str(value), "%Y-%m-%d %H:%M:%S%z")
+#         # nowdata = datetime.now() + timedelta(hours=1)
+#         # now = pytz.utc.localize(nowdata)
+
+#         # if (now > data):
+#         #     raise ValidationError("Please enter an ETA at least an hour from today")
+    
+#     def __eq__(self, other):
+#         return (
+#             isinstance(other, EtaValidator) and
+#             self.oldeta == other.oldeta
+#         )
 
 # Create your models here.
 class Project(models.Model):
@@ -46,8 +65,10 @@ class Project(models.Model):
       ("Decipher", "Decipher"),
       ("CMIX","CMIX"),
       ("Confirmit","Confirmit")
-    ]
-        
+    ]    
+    # eta check
+    __original_eta = None
+
     code = models.SlugField(max_length=8, default=generate_unique_code, unique=True)
     ord = models.CharField(max_length=15, unique=True, validators=[RegexValidator(regex="^ORD-[0-9]{6}-[0-9A-Z]{4}$", message="Please enter the ORD in ORD-XXXXX-XXXX format.")])
     project_name = models.CharField(max_length=200)
@@ -56,8 +77,30 @@ class Project(models.Model):
     region = models.CharField(max_length=10, blank=True, choices=REGION_CHOICES)
     pid = models.CharField(max_length=20, blank=True)
     platform = models.CharField(max_length=15, default="Decipher", choices=PLATFORM_CHOICES)
-    eta = models.DateTimeField(blank=True,validators=[validate_eta])
+    eta = models.DateTimeField(null=True,blank=True)
     details = models.TextField(max_length=255, blank=True)
-    
+  
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_eta = self.eta
+
+    # validation to check ETA
+    def clean(self):
+      if self.eta is not None:
+        data = datetime.strptime(str(self.eta), "%Y-%m-%d %H:%M:%S%z")
+        nowdata = datetime.now() + timedelta(hours=1)
+        now = pytz.utc.localize(nowdata)
+
+        if (now > data):
+            if self.__original_eta is not None:
+              if self.eta != self.__original_eta:
+                raise ValidationError({
+                  "eta": "If you wish to change the ETA, please enter an ETA at least an hour from now"
+                })
+            else:
+              raise ValidationError({
+                 "eta": "Please enter an ETA at least an hour from today"
+              })    
+
     def __str__(self):
         return f"{self.ord} - {self.project_name}"

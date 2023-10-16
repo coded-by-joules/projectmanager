@@ -23,3 +23,10 @@ class ProjectForm(forms.ModelForm):
            "eta": forms.TextInput(attrs={**form_controlClass, "type":"datetime-local", "min":etastr}),
            "details": forms.Textarea(attrs=form_controlClass)
        }
+    
+    def __init__(self, *args, **kwargs):
+        method = kwargs.pop("method", "add")
+        super().__init__(*args,**kwargs)
+        if (method == "edit"):
+            self.fields["ord"].disabled = True
+            self.fields["status"].disabled = True            

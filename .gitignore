@@ -1,6 +1,11 @@
 # ignore folders
 __pycache__
 migrations
+api/__pycache__
+api/migrations
+projectmanager/__pycache__
+testfront/__pycache__
+testfront/migrations
 
 # ignore files
 testing.py
