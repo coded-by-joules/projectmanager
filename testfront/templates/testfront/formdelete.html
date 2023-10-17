@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} {{formText}} Project - Project Manager {%endblock %}
+{% block css %} {% static "css/index.css" %} {% endblock %}
+
+{% block body %}
+<h2>Delete Project</h2>
+
+<form class="my-4" method="POST">
+    {% csrf_token %}
+    <h5>Are you sure you want to delete {{project.ord}} - {{project.project_name}}?</h5>
+    <h6>This action will not be undone.</h6>
+
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a role="button" href="{% url "projectall" %}" class="btn btn-secondary">No</a>
+</form>
+
+
+{% endblock %}

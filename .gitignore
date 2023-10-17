@@ -2,10 +2,12 @@
 __pycache__
 migrations
 api/__pycache__
-api/migrations
+api/migrations/
+api/migrations/__pycache__
 projectmanager/__pycache__
 testfront/__pycache__
 testfront/migrations
+testfront/migrations/__pycache__
 
 # ignore files
 testing.py

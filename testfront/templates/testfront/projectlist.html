@@ -9,12 +9,10 @@
 
       <form class="row">
         <div class="col-10">
-          <input
-            type="text"
-            class="form-control  align-middle"
-            id="searchProject"
-            placeholder="Search Project, then press Enter"
-          />
+          <div class="input-group">
+          <input type="text" class="form-control" name="search" minlength="3" placeholder="Search by ORD or project name" aria-label="Search Project" aria-describedby="button-search">
+          <button class="btn btn-outline-secondary" type="submit" id="button-search">Search</button>
+          </div>
         </div>
         <div class="col-2 d-grid">
           <a role="button" class="btn btn-success" href="{% url "newproject" %}">
@@ -31,7 +29,7 @@
       </div>
       {% endif %}
       <hr class="border-2 border-black opacity-100" />
-      {% if count > 0 %}
+      {% if projects|length > 0 %}
       <table class="table">
         <thead>
           <tr>
@@ -58,16 +56,35 @@
                 ...
               </button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url "projectedit" project.ord %}">Edit Project</a></li>
-                <li><a class="dropdown-item" href="#">Delete Project</a></li>
+                <li><a class="dropdown-item" href="{% url "projectedit" project.code %}">Edit Project</a></li>
+                <li><a class="dropdown-item" href="{% url "projectdel" project.code %}">Delete Project</a></li>
               </ul>
             </div></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
+
+      {% if pages|length > 1 %}
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item {% if current == 1  %}disabled{%endif%}">
+            <a class="page-link" href="{% url "projectall" %}">First</a>
+          </li>
+          {% if showPrev %} <li class="page-item"><a class="page-link" href="?page={{prev_page}}">Previous</a></li> {% endif %}
+          {% for page in pages %}
+          <li class="page-item"><a class="page-link {% if current == page %} active {% endif %}" href="?page={{page}}">{{page}}</a></li>
+          {% endfor %}
+          {% if showNext %} <li class="page-item"><a class="page-link" href="?page={{next_page}}">Next</a></li> {% endif %}
+          <li class="page-item">
+            <a class="page-link {% if current == last %}disabled{%endif%}" href="?page={{last}}">Last</a>
+          </li>
+        </ul>
+      </nav>
       {% endif %}
-      {% if count == 0 %}
+      {% endif %}
+
+      {% if projects|length == 0 %}
       <div class="text-center">
         <h1>No projects</h1>
         <p>Refine your search, or click the "Add Project" button</p>
