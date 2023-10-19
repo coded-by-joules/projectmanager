@@ -11,3 +11,4 @@ testfront/migrations/__pycache__
 
 # ignore files
 testing.py
+*.pyc

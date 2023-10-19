@@ -32,8 +32,13 @@
             <a class="nav-link active" aria-current="page" href="{% url "projectall" %}">Projects</a>
             <a class="nav-link" href="#">Workload</a>
           </div>
-          <div class="d-lg-flex col-lg-3 justify-content-lg-end">
-            <button class="btn btn-outline-primary">Logout</button>
+          <div class="d-lg-flex col-lg-3 justify-content-lg-end dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{user.username}}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-lg-end" data-bs-display="static">
+              <li><a class="dropdown-item" href="/logout">Logout</a></li>
+            </ul>
           </div>
         </div>
       </div>
