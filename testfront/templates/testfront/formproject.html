@@ -83,22 +83,30 @@
       </div>
     </div>
     <div class="row mb-3">
-        <label for="{{ form.platform.id_for_label }}" class="col-form-label fw-bold col-sm-2"
-          >Platform</label
-        >
-        <div class="col-sm-10">
-          {{ form.platform }}
-          {% if form.platform.errors %}
-          <div class="alert alert-danger mt-2" role="alert">
-            <ul class="list-unstyled my-0">
-              {% for error in form.platform.errors %}
-              <li>{{error}}</li>
-              {% endfor %}
-            </ul>
-          </div>
-          {% endif %}                 
+      <label for="{{ form.platform.id_for_label }}" class="col-form-label fw-bold col-sm-2"
+        >Platform</label
+      >
+      <div class="col-sm-10">
+        {{ form.platform }}
+        {% if form.platform.errors %}
+        <div class="alert alert-danger mt-2" role="alert">
+          <ul class="list-unstyled my-0">
+            {% for error in form.platform.errors %}
+            <li>{{error}}</li>
+            {% endfor %}
+          </ul>
         </div>
-      </div>      
+        {% endif %}                 
+      </div>
+    </div>
+    {% if username %}
+    <div class="row mb-3">
+      <p class="fw-bold col-sm-2">Project Creator</p>
+      <div class="col-sm-10">
+        <span>{{username}}</span>               
+      </div>
+    </div>
+    {% endif %}
   </fieldset>
 
   <fieldset class="my-3 border p-3 rounded shadow">

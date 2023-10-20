@@ -5,7 +5,9 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 import re
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponseForbidden
+
 
 # search project setup
 def search_project(search_key):
@@ -77,15 +79,18 @@ def mainpage(request):
     return render(request, "testfront/projectlist.html", paginator_result)
 
 @login_required
+@permission_required("api.view_project",raise_exception=True)
 def projectview(request, project_ord):
     project = get_object_or_404(Project, ord=project_ord)
     return render(request, "testfront/project.html", {
         "project": project
     })
 
+@login_required
+@permission_required("api.add_project",raise_exception=True)
 def newproject(request):
     if request.method == "GET":            
-       form = ProjectForm()           
+       form = ProjectForm(initial={'creator':request.user.username})           
        return render(request, "testfront/formproject.html", {
            "form": form,           
            "formText": "Add"
@@ -93,7 +98,9 @@ def newproject(request):
     else:
        form = ProjectForm(request.POST)
        if form.is_valid():
-           form.save()
+           project = form.save(commit=False)
+           project.creator = request.user
+           project.save()
            messages.success(request, "Project added succesfully")
            return redirect("projectall")
        else:
@@ -103,13 +110,19 @@ def newproject(request):
             "formText": "Add"
            })
 
-def projectedit(request, project_code):    
-    editproj =get_object_or_404(Project, code=project_code)
+@login_required
+def projectedit(request, project_code):
+    editproj = get_object_or_404(Project, code=project_code)
+    if (editproj.creator != request.user and not request.user.has_perm("api.change_project")):
+        return HttpResponseForbidden("Access denied")
+    
     if request.method == "GET":
+        username = editproj.creator.username
         form = ProjectForm(instance = editproj, method="edit")
         return render(request, "testfront/formproject.html", {
             "form": form,
-            "formText": "Edit"
+            "formText": "Edit",
+            "username": username
         })
     else:
         form = ProjectForm(request.POST, instance=editproj, method="edit")
@@ -124,8 +137,12 @@ def projectedit(request, project_code):
             "formText": "Edit"
            })
 
+@login_required
 def projectdel(request, project_code):    
     project = get_object_or_404(Project, code=project_code)
+    if (project.creator != request.user and not request.user.has_perm("api.change_project")):
+        return HttpResponseForbidden("Access denied")
+
     if (request.method == "GET"):
         return render(request, "testfront/formdelete.html", {
             "project": project

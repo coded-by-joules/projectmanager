@@ -2,10 +2,10 @@ from django.db import models
 import string
 import random
 import pytz
-import re
 from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 from django.core.validators import RegexValidator
+from django.contrib.auth.models import User
 
 # Generate random slug
 def generate_unique_code():
@@ -17,35 +17,6 @@ def generate_unique_code():
             break
 
     return code
-
-# eta validator
-# @deconstructible
-# class EtaValidator:
-#     oldeta = None
-
-#     def __init__(self, oldeta=None):
-#         if oldeta is not None:
-#            self.oldeta = oldeta
-
-#     def __call__(self, value):
-#         print(f"old eta: {self.oldeta}")
-#         print(f"new eta: {value}")
-#         if self.oldeta is not None:
-#             if value != self.oldeta:
-#               raise ValidationError("Please don't change ETA")
-        
-#         # data = datetime.strptime(str(value), "%Y-%m-%d %H:%M:%S%z")
-#         # nowdata = datetime.now() + timedelta(hours=1)
-#         # now = pytz.utc.localize(nowdata)
-
-#         # if (now > data):
-#         #     raise ValidationError("Please enter an ETA at least an hour from today")
-    
-#     def __eq__(self, other):
-#         return (
-#             isinstance(other, EtaValidator) and
-#             self.oldeta == other.oldeta
-#         )
 
 # Create your models here.
 class Project(models.Model):
@@ -79,6 +50,7 @@ class Project(models.Model):
     platform = models.CharField(max_length=15, default="Decipher", choices=PLATFORM_CHOICES)
     eta = models.DateTimeField(null=True,blank=True)
     details = models.TextField(max_length=255, blank=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
   
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -11,7 +11,7 @@ class ProjectForm(forms.ModelForm):
 
        model = Project
        fields = "__all__"
-       exclude = ["code"]
+       exclude = ["code","creator"]
        widgets = {
            "ord": forms.TextInput(attrs={**form_controlClass, "placeholder":"ORD-XXXXXX-XXXX"}),
            "project_name": forms.TextInput(attrs=form_controlClass),
@@ -29,4 +29,4 @@ class ProjectForm(forms.ModelForm):
         super().__init__(*args,**kwargs)
         if (method == "edit"):
             self.fields["ord"].disabled = True
-            self.fields["status"].disabled = True            
+            self.fields["status"].disabled = True 
