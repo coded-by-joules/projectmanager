@@ -4,5 +4,22 @@
 {% block title %} Project Manager {% endblock %} 
 {% block css %} {% static "css/index.css" %} {% endblock %} 
 {% block body %}
-<h1>{{project.ord}} - {{project.project_name}}</h1>
+<header>
+    <h4>{{project.ord}} - {{project.project_name}} <span class="badge rounded-pill text-bg-secondary">Secondary</span></h4>
+</header>
+
+<hr/>
+
+<main class="container">
+<div class="row gx-2">
+    <div class="col-lg-4 p-3">
+        <h5>Summary</h5>
+        <hr/>
+    </div>
+    <div class="col-lg-8 p-3">
+        <h5>Updates</h5>
+        <hr/>
+    </div>
+</div>
+</main>
 {% endblock %}

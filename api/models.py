@@ -76,3 +76,9 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.ord} - {self.project_name}"
+
+class ProjectLog(models.Model):
+   project = models.ManyToManyField(Project)
+   creator = models.ManyToManyField(User)
+   message = models.TextField(max_length=255)
+   created = models.DateTimeField(auto_now_add=True)
