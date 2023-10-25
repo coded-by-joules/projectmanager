@@ -5,20 +5,61 @@
 {% block css %} {% static "css/index.css" %} {% endblock %} 
 {% block body %}
 <header>
-    <h4>{{project.ord}} - {{project.project_name}} <span class="badge rounded-pill text-bg-secondary">Secondary</span></h4>
+    <h4><span class="text-truncate">{{project.ord}} - {{project.project_name}}</span> <span class="badge rounded-pill text-bg-secondary">Secondary</span></h4>
 </header>
 
 <hr/>
 
 <main class="container">
-<div class="row gx-2">
-    <div class="col-lg-4 p-3">
+<div class="d-lg-flex justify-content-between">
+    <div class="col-lg-3 p-3 rounded shadow row-gap-4">
         <h5>Summary</h5>
         <hr/>
+        <div class="row mt-1">
+            <div class="col-sm-6 fw-bold">
+                Main SP
+            </div>
+            <div class="col-sm-6">
+                Jules Kelly Siarez
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-sm-6 fw-bold">
+                Region
+            </div>
+            <div class="col-sm-6">
+                APAC
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-sm-6 fw-bold">
+                Platform
+            </div>
+            <div class="col-sm-6">
+                Decipher
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-sm-6 fw-bold">
+                ETA
+            </div>
+            <div class="col-sm-6">
+                Aug 26, 2023
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-sm-12">
+                <a role="button" class="btn btn-success d-block" href="{% url "projectedit" "ARLCIY" %}">Edit Project</a>
+            </div>
+        </div>
+           
     </div>
-    <div class="col-lg-8 p-3">
-        <h5>Updates</h5>
-        <hr/>
+    <div class="col-lg-8 p-3 mt-lg-0 mt-sm-3 mb-3">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Make an update</h3>
+            </div>
+        </div>
     </div>
 </div>
 </main>
