@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Generate random slug
 def generate_unique_code():
@@ -76,9 +77,23 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.ord} - {self.project_name}"
+    
+    def get_absolute_url(self):        
+        return reverse("project", args=[self.ord])
+    
+    
+    
 
 class ProjectLog(models.Model):
+   UPDATE_CHOICES = [
+      ("update", "Update"),
+      ("testlink","Test Link Sent"),
+      ("live","Set to Live"),
+      ("close","Set to Closed"),
+   ]       
+
    project = models.ManyToManyField(Project)
    creator = models.ManyToManyField(User)
    message = models.TextField(max_length=255)
+   update_type = models.CharField(max_length=20, default="update", choices=UPDATE_CHOICES)
    created = models.DateTimeField(auto_now_add=True)

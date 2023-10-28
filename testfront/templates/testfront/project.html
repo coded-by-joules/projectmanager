@@ -12,7 +12,7 @@
 
 <main class="container">
 <div class="d-lg-flex justify-content-between">
-    <div class="col-lg-3 p-3 rounded shadow row-gap-4">
+    <div class="col-lg-3 p-3 rounded shadow">
         <h5>Summary</h5>
         <hr/>
         <div class="row mt-1">
@@ -54,11 +54,61 @@
         </div>
            
     </div>
-    <div class="col-lg-8 p-3 mt-lg-0 mt-sm-3 mb-3">
-        <div class="row">
-            <div class="col-sm-12">
-                <h3>Make an update</h3>
-            </div>
+    <form class="col-lg-8 rounded shadow p-3 mt-lg-0 mt-sm-3 mb-3">
+       <h5>Make an update</h5>
+       <hr/>
+       <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Enter your update here"></textarea>
+       <div class="d-flex mt-2 justify-content-between">
+        <div>
+            <select class="form-select form-select-sm" aria-label="Small select example">
+                <option selected>Update type</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Post Update</button>
+        </div>
+       </div>
+    </form>
+</div>
+<div class="container mt-4">
+    <h4 class="mb-4">Updates</h4>
+    <div class="card text-bg-danger mb-4">
+        <div class="card-header">
+            Set to Live
+          </div>
+        <div class="card-body">
+          <h5 class="card-title">Jules Kelly Siarez set the project to live</h5>
+          <p class="card-text">This is now launched</p>
+        </div>
+        <div class="card-footer">
+            October 20, 2023
+        </div>
+    </div>  
+    <div class="card text-bg-success mb-4">
+        <div class="card-header">
+            Test Link Sent
+          </div>
+        <div class="card-body">
+          <h5 class="card-title">Jules Kelly Siarez sent the test link</h5>
+          <p class="card-text">Done working on scripting all questions. Please see internal SP email</p>
+        </div>
+        <div class="card-footer">
+            October 20, 2023
+        </div>
+    </div>      
+    <div class="card text-bg-secondary mb-4">
+        <div class="card-header">
+            Update
+          </div>
+        <div class="card-body">
+          <h5 class="card-title">Jules Kelly Siarez posted an update</h5>
+          <p class="card-text">Done working on scripting all questions. Please see internal SP email</p>
+        </div>
+        <div class="card-footer">
+            October 20, 2023
         </div>
     </div>
 </div>
