@@ -1,5 +1,5 @@
 from django import forms
-from api.models import Project
+from api.models import Project, ProjectLog
 from datetime import datetime, timedelta
 
 class ProjectForm(forms.ModelForm):
@@ -30,3 +30,12 @@ class ProjectForm(forms.ModelForm):
         if (method == "edit"):
             self.fields["ord"].disabled = True
             self.fields["status"].disabled = True 
+
+class ProjectLogForm(forms.ModelForm):
+    class Meta:
+        model = ProjectLog
+        fields = ["message", "update_type"]
+        widgets = {
+            "message": forms.Textarea(attrs={"class": "form-control", "placeholder": "Enter your update here", "rows":"5"}),
+            "update_type": forms.Select(attrs={"class":"form-select form-select-sm"})
+        }

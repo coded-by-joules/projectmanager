@@ -5,7 +5,13 @@
 {% block css %} {% static "css/index.css" %} {% endblock %} 
 {% block body %}
 <header>
-    <h4><span class="text-truncate">{{project.ord}} - {{project.project_name}}</span> <span class="badge rounded-pill text-bg-secondary">Secondary</span></h4>
+    <h4><span class="text-truncate">{{project.ord}} - {{project.project_name}}</span> <span class="badge rounded-pill 
+        {% if project.status == "Headsup" %} text-bg-secondary {% endif %}
+        {% if project.status == "Programming" %} text-bg-primary {% endif %}
+        {% if project.status == "Changes" or project.status == "LiveChange" %} text-bg-warning {% endif %}
+        {% if project.status == "Live" %} text-bg-success {% endif %}
+        {% if project.status == "Closed" %} text-bg-danger {% endif %}
+      ">{{project.status|upper}}</span></h4>
 </header>
 
 <hr/>
@@ -16,40 +22,40 @@
         <h5>Summary</h5>
         <hr/>
         <div class="row mt-1">
-            <div class="col-sm-6 fw-bold">
+            <div class="col-sm-4 fw-bold">
                 Main SP
             </div>
-            <div class="col-sm-6">
-                Jules Kelly Siarez
+            <div class="col-sm-8">
+                {{creator}}
             </div>
         </div>
         <div class="row mt-1">
-            <div class="col-sm-6 fw-bold">
+            <div class="col-sm-4 fw-bold">
                 Region
             </div>
-            <div class="col-sm-6">
-                APAC
+            <div class="col-sm-8">
+                {{project.region}}
             </div>
         </div>
         <div class="row mt-1">
-            <div class="col-sm-6 fw-bold">
+            <div class="col-sm-4 fw-bold">
                 Platform
             </div>
-            <div class="col-sm-6">
-                Decipher
+            <div class="col-sm-8">
+                {{project.platform}}
             </div>
         </div>
         <div class="row mt-1">
-            <div class="col-sm-6 fw-bold">
+            <div class="col-sm-4 fw-bold">
                 ETA
             </div>
-            <div class="col-sm-6">
-                Aug 26, 2023
+            <div class="col-sm-8">
+                {{project.eta}}
             </div>
         </div>
         <div class="row mt-3">
             <div class="col-sm-12">
-                <a role="button" class="btn btn-success d-block" href="{% url "projectedit" "ARLCIY" %}">Edit Project</a>
+                <a role="button" class="btn btn-success d-block" href="{% url "projectedit" project.code %}">Edit Project</a>
             </div>
         </div>
            
@@ -57,16 +63,18 @@
     <form class="col-lg-8 rounded shadow p-3 mt-lg-0 mt-sm-3 mb-3">
        <h5>Make an update</h5>
        <hr/>
-       <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Enter your update here"></textarea>
-       <div class="d-flex mt-2 justify-content-between">
-        <div>
-            <select class="form-select form-select-sm" aria-label="Small select example">
-                <option selected>Update type</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div>
+       {{form.message}}
+       {% if form.message.errors %}
+       <div class="alert alert-danger mt-2" role="alert">
+         <ul class="list-unstyled my-0">
+           {% for error in form.message.errors %}
+           <li>{{error}}</li>
+           {% endfor %}
+         </ul>
+       </div>
+       {% endif %}  
+       <div class="d-flex mt-2 justify-content-between align-items-center">
+        <div>{{ form.update_type }}</div>
         <div class="text-end">
             <button type="submit" class="btn btn-primary">Post Update</button>
         </div>
@@ -75,42 +83,21 @@
 </div>
 <div class="container mt-4">
     <h4 class="mb-4">Updates</h4>
-    <div class="card text-bg-danger mb-4">
-        <div class="card-header">
-            Set to Live
-          </div>
-        <div class="card-body">
-          <h5 class="card-title">Jules Kelly Siarez set the project to live</h5>
-          <p class="card-text">This is now launched</p>
-        </div>
-        <div class="card-footer">
-            October 20, 2023
-        </div>
-    </div>  
-    <div class="card text-bg-success mb-4">
-        <div class="card-header">
-            Test Link Sent
-          </div>
-        <div class="card-body">
-          <h5 class="card-title">Jules Kelly Siarez sent the test link</h5>
-          <p class="card-text">Done working on scripting all questions. Please see internal SP email</p>
-        </div>
-        <div class="card-footer">
-            October 20, 2023
-        </div>
-    </div>      
+    {% for log in logs %}
     <div class="card text-bg-secondary mb-4">
         <div class="card-header">
-            Update
+            {{log.get_update_type_display}}
           </div>
         <div class="card-body">
-          <h5 class="card-title">Jules Kelly Siarez posted an update</h5>
-          <p class="card-text">Done working on scripting all questions. Please see internal SP email</p>
+          <p class="card-text">{{log.message}}</p>
         </div>
         <div class="card-footer">
-            October 20, 2023
+            {{log.created}}
         </div>
-    </div>
+    </div>  
+    {% empty %}
+    <h6 class="text-center">Please add updates to this project</h6>
+    {% endfor %}
 </div>
 </main>
 {% endblock %}

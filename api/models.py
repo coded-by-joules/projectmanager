@@ -26,6 +26,7 @@ class Project(models.Model):
      ("Programming","Programming"),
      ("Changes","Changes"),
      ("Live", "Live"),
+     ("LiveChange", "Live Changes"),
      ("Closed", "Closed")
     ]
     REGION_CHOICES = [
@@ -79,21 +80,24 @@ class Project(models.Model):
         return f"{self.ord} - {self.project_name}"
     
     def get_absolute_url(self):        
-        return reverse("project", args=[self.ord])
-    
-    
-    
+        return reverse("project", args=[self.ord])    
 
 class ProjectLog(models.Model):
    UPDATE_CHOICES = [
-      ("update", "Update"),
-      ("testlink","Test Link Sent"),
-      ("live","Set to Live"),
-      ("close","Set to Closed"),
-   ]       
+      ("update","Update only"),
+      ("scripting","Started Scripting"),
+      ("testlinksent","Test Link Sent"),
+      ("settolive","Set to Live"),
+      ("settolivechange","Change to Live Changes"),
+      ("paused","Paused"),
+      ("toclosed","Set to Closed"),
+      ("reopened","Re-open Project"),
+      ("created","Project created"),
+      ("edited","Project details edited")
+   ]
 
-   project = models.ManyToManyField(Project)
-   creator = models.ManyToManyField(User)
+   project = models.ForeignKey(Project, on_delete=models.CASCADE, to_field="code")
+   creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
    message = models.TextField(max_length=255)
    update_type = models.CharField(max_length=20, default="update", choices=UPDATE_CHOICES)
    created = models.DateTimeField(auto_now_add=True)

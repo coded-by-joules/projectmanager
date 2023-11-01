@@ -46,7 +46,7 @@
             <td class="align-middle"><span class="badge rounded-pill 
               {% if project.status == "Headsup" %} text-bg-secondary {% endif %}
               {% if project.status == "Programming" %} text-bg-primary {% endif %}
-              {% if project.status == "Changes" %} text-bg-warning {% endif %}
+              {% if project.status == "Changes" or project.status == "LiveChange" %} text-bg-warning {% endif %}
               {% if project.status == "Live" %} text-bg-success {% endif %}
               {% if project.status == "Closed" %} text-bg-danger {% endif %}
             ">{{project.status|upper}}</span></td>
@@ -57,7 +57,7 @@
                   ...
                 </button>
                 <ul class="dropdown-menu">                  
-                    <li><a class="dropdown-item {% if project.creator != user and not perms.api.change_project %} disabled {% endif %}" href="{% url "projectedit" project.code}">Edit Project</a></li>
+                    <li><a class="dropdown-item {% if project.creator != user and not perms.api.change_project %} disabled {% endif %}" href="{% url "projectedit" project.code %}">Edit Project</a></li>
                     <li><a class="dropdown-item {% if project.creator != user and not perms.api.delete_project %} disabled {% endif %}" href="{% url "projectdel" project.code %}">Delete Project</a></li>
                 </ul>
               </div>

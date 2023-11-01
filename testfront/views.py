@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
-from api.models import Project
-from .forms import ProjectForm
+from api.models import Project, ProjectLog
+from .forms import ProjectForm, ProjectLogForm
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 import re
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseForbidden
-
+from django.contrib.auth.models import User
 
 # search project setup
 def search_project(search_key):
@@ -27,7 +27,7 @@ def search_project(search_key):
     return projects_list
 
 # paginator setup
-def paginator_setup(projects_list, page_get):
+def paginator_setup(projects_list: Project, page_get):
     project_pages = Paginator(projects_list.order_by("created_date"), 15)
     page_num = page_get
 
@@ -61,6 +61,25 @@ def paginator_setup(projects_list, page_get):
         "next_page": next_page
     }
 
+def addtolog(projectObj: Project, user: User, updates=""):
+    logCheck = ProjectLog.objects.filter(project=projectObj).count()
+    if logCheck > 0:
+        log = ProjectLog(
+            project=projectObj,
+            creator=user,
+            update_type="edited",
+            message=f"{user.first_name} {user.last_name} edited the {updates} details for this project"
+        )
+    else:
+        log = ProjectLog(
+            project=projectObj,
+            creator=user,
+            update_type="created",
+            message=f"{user.first_name} {user.last_name} created this project."
+        )
+    
+    log.save()
+        
 
 # Create your views here.
 @login_required
@@ -82,8 +101,17 @@ def mainpage(request):
 @permission_required("api.view_project",raise_exception=True)
 def projectview(request, project_ord):
     project = get_object_or_404(Project, ord=project_ord)
+    creator = f"{project.creator.first_name} {project.creator.last_name}"
+    logs = ProjectLog.objects.filter(project=project).order_by("-created")
+
+    if request.method == "GET":
+        logform = ProjectLogForm()
+
     return render(request, "testfront/project.html", {
-        "project": project
+        "project": project,
+        "creator": creator,
+        "form": logform,
+        "logs": logs
     })
 
 @login_required
@@ -101,6 +129,8 @@ def newproject(request):
            project = form.save(commit=False)
            project.creator = request.user
            project.save()
+
+           addtolog(project, request.user)
            messages.success(request, "Project added succesfully")
            return redirect("projectall")
        else:
@@ -117,7 +147,7 @@ def projectedit(request, project_code):
         return HttpResponseForbidden("Access denied")
     
     if request.method == "GET":
-        username = editproj.creator.username
+        username = f"{editproj.creator.first_name} {editproj.creator.last_name}"
         form = ProjectForm(instance = editproj, method="edit")
         return render(request, "testfront/formproject.html", {
             "form": form,
@@ -127,7 +157,12 @@ def projectedit(request, project_code):
     else:
         form = ProjectForm(request.POST, instance=editproj, method="edit")
         if form.is_valid():
-            form.save()
+            updates = ""
+            if form.has_changed():
+                updates = ", ".join(form.changed_data)
+            project = form.save()
+
+            addtolog(project, request.user, updates)
             messages.success(request, "Project edited successfully")
             return redirect("projectall")
         else:
