@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %} 
 
-{% block title %} Project Manager {% endblock %} 
+{% block title %} {{project.ord}} - {{project.project_name}} Project Manager {% endblock %} 
 {% block css %} {% static "css/index.css" %} {% endblock %} 
 {% block body %}
 <header>
@@ -55,7 +55,7 @@
         </div>
         <div class="row mt-3">
             <div class="col-sm-12">
-                <a role="button" class="btn btn-success d-block" href="{% url "projectedit" project.code %}">Edit Project</a>
+                <a role="button" class="btn btn-success d-block {% if project.creator != user and not perms.api.change_project %} disabled {% endif %}" href="{% url "projectedit" project.code %}">Edit Project</a>
             </div>
         </div>
            

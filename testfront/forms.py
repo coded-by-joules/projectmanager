@@ -11,11 +11,10 @@ class ProjectForm(forms.ModelForm):
 
        model = Project
        fields = "__all__"
-       exclude = ["code","creator"]
+       exclude = ["code","creator","status"]
        widgets = {
            "ord": forms.TextInput(attrs={**form_controlClass, "placeholder":"ORD-XXXXXX-XXXX"}),
            "project_name": forms.TextInput(attrs=form_controlClass),
-           "status": forms.Select(attrs=form_selectClass),
            "region": forms.Select(attrs=form_selectClass),
            "pid": forms.TextInput(attrs={**form_controlClass, "placeholder":"Example, for Decipher projects, ID is 53c/201104"}),
            "platform": forms.Select(attrs=form_selectClass),
@@ -29,7 +28,6 @@ class ProjectForm(forms.ModelForm):
         super().__init__(*args,**kwargs)
         if (method == "edit"):
             self.fields["ord"].disabled = True
-            self.fields["status"].disabled = True 
 
 class ProjectLogForm(forms.ModelForm):
     class Meta:
