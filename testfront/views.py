@@ -61,21 +61,25 @@ def paginator_setup(projects_list: Project, page_get):
         "next_page": next_page
     }
 
-def addtolog(projectObj: Project, user: User, updates=""):
+def addtolog(projectObj: Project, user: User, updates=[]):
     logCheck = ProjectLog.objects.filter(project=projectObj).count()
     if logCheck > 0:
+        messageStr = "The following details are edited:<br/><br/>"
+        for item in updates:            
+            messageStr += f"{item['key']}: {item['value']}<br/>"
         log = ProjectLog(
             project=projectObj,
             creator=user,
             update_type="edited",
-            message=f"{user.first_name} {user.last_name} edited the {updates} details for this project"
+            log_header=f"{user.first_name} {user.last_name} edited some details for this project",
+            message=messageStr
         )
     else:
         log = ProjectLog(
             project=projectObj,
             creator=user,
             update_type="created",
-            message=f"{user.first_name} {user.last_name} created this project."
+            log_header=f"{user.first_name} {user.last_name} created this project."
         )
     
     log.save()
@@ -157,9 +161,13 @@ def projectedit(request, project_code):
     else:
         form = ProjectForm(request.POST, instance=editproj, method="edit")
         if form.is_valid():
-            updates = ""
+            updates = []
             if form.has_changed():
-                updates = ", ".join(form.changed_data)
+                for field in form.changed_data:
+                    updates.append({
+                        "key": field,
+                        "value": form.cleaned_data[field]
+                    })
             project = form.save()
 
             addtolog(project, request.user, updates)

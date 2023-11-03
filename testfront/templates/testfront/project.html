@@ -84,12 +84,21 @@
 <div class="container mt-4">
     <h4 class="mb-4">Updates</h4>
     {% for log in logs %}
-    <div class="card text-bg-secondary mb-4">
+    <div class="card 
+    
+    {% if log.update_type == "update" %} text-bg-secondary {% endif %}
+    {% if log.update_type == "scripting" %} text-bg-success {% endif %}
+    {% if log.update_type == "textlinksent" or log.update_type == "settolivechange" %} text-bg-warning {% endif %}
+    {% if log.update_type == "settolive" or log.update_type == "toclosed" %} text-bg-danger {% endif %}
+    {% if log.update_type == "paused" or log.update_type == "reopened" or log.update_type == "created" or log.update_type == "edited" %} text-bg-primary {% endif %}
+
+    mb-4">
         <div class="card-header">
             {{log.get_update_type_display}}
           </div>
-        <div class="card-body">
-          <p class="card-text">{{log.message}}</p>
+        <div class="card-body">            
+          <h5 class="card-title">{{ log.log_header }}</h5>
+          {% if log.message %} <p class="card-text">{{log.message|safe}}</p> {% endif %}
         </div>
         <div class="card-footer">
             {{log.created}}

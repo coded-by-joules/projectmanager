@@ -98,6 +98,7 @@ class ProjectLog(models.Model):
 
    project = models.ForeignKey(Project, on_delete=models.CASCADE, to_field="code")
    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-   message = models.TextField(max_length=255)
+   log_header = models.CharField(max_length=255, null=True, blank=True)
+   message = models.TextField(max_length=255, blank=True, null=True)   
    update_type = models.CharField(max_length=20, default="update", choices=UPDATE_CHOICES)
    created = models.DateTimeField(auto_now_add=True)
