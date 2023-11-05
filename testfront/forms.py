@@ -31,9 +31,60 @@ class ProjectForm(forms.ModelForm):
 
 class ProjectLogForm(forms.ModelForm):
     class Meta:
-        model = ProjectLog
-        fields = ["message", "update_type"]
-        widgets = {
+       model = ProjectLog
+       fields = ["id","message", "update_type"]
+       widgets = {
             "message": forms.Textarea(attrs={"class": "form-control", "placeholder": "Enter your update here", "rows":"5"}),
             "update_type": forms.Select(attrs={"class":"form-select form-select-sm"})
         }
+
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop("project", None)        
+        super().__init__(*args, **kwargs)
+        if isinstance(project, Project):
+            if project.status in ["Headsup"]:
+                self.fields["update_type"].choices = [
+                    ('update', 'Update only'),
+                    ('scripting', 'Started Scripting'),
+                    ("toclosed","Set to Closed")
+                ]
+            elif project.status in ["Programming"]:
+                self.fields["update_type"].choices = [
+                    ('update', 'Update only'),
+                    ("testlinksent","Test Link Sent"),                    
+                    ("settolive","Set to Live"),
+                    ("paused","Paused"),
+                    ("toclosed","Set to Closed")
+                ]
+            elif project.status in ["Changes"]:
+                self.fields["update_type"].choices = [
+                    ('update', 'Update only'),
+                    ("settolive","Set to Live"),
+                    ("paused","Paused"),
+                    ("toclosed","Set to Closed")
+                ]
+            elif project.status in ["Live"]:
+                self.fields["update_type"].choices = [
+                    ('update', 'Update only'),
+                    ("settolivechange","Change to Live Changes"),
+                    ("paused","Paused"),
+                    ("toclosed","Set to Closed")
+                ]
+            elif project.status in ["LiveChange"]:
+                self.fields["update_type"].choices = [
+                    ('update', 'Update only'),
+                    ("settolive","Set to Live"),
+                    ("paused","Paused"),
+                    ("toclosed","Set to Closed")
+                ]
+            elif project.status in ["Paused"]:
+                self.fields["update_type"].choices = [
+                    ('update', 'Update only'),
+                    ("settolive","Set to Live"),
+                    ("toclosed","Set to Closed")
+                ]
+            elif project.status in ["Closed"]:
+                self.fields["update_type"].choices = [
+                    ('update', 'Update only'),
+                    ("reopened","Re-open Project"),
+                ]

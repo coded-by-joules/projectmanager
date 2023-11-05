@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 import re
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.models import User
 
 # search project setup
@@ -61,6 +61,7 @@ def paginator_setup(projects_list: Project, page_get):
         "next_page": next_page
     }
 
+# add to log when adding/editing project
 def addtolog(projectObj: Project, user: User, updates=[]):
     logCheck = ProjectLog.objects.filter(project=projectObj).count()
     if logCheck > 0:
@@ -71,7 +72,7 @@ def addtolog(projectObj: Project, user: User, updates=[]):
             project=projectObj,
             creator=user,
             update_type="edited",
-            log_header=f"{user.first_name} {user.last_name} edited some details for this project",
+            log_header="edited",
             message=messageStr
         )
     else:
@@ -79,11 +80,30 @@ def addtolog(projectObj: Project, user: User, updates=[]):
             project=projectObj,
             creator=user,
             update_type="created",
-            log_header=f"{user.first_name} {user.last_name} created this project."
+            log_header="created"
         )
     
     log.save()
         
+# get header when adding log
+def getHeader(status: str, user: User):
+    username = f"{user.first_name} {user.last_name}"
+    if status == "update":
+        return f"{username} posted an update"
+    elif status == "scripting":
+        return f"{username} started scripting the project"
+    elif status == "testlinksent":
+        return f"{username} sent the test link(s)"
+    elif status == "settolive":
+        return f"{username} launched the study"
+    elif status == "settolivechange":
+        return f"{username} made some live changes"
+    elif status == "paused":
+        return f"{username} paused the study"
+    elif status == "toclosed":
+        return f"{username} closed the study"
+    elif status == "reopened":
+        return f"{username} reopened the study"
 
 # Create your views here.
 @login_required
@@ -109,7 +129,35 @@ def projectview(request, project_ord):
     logs = ProjectLog.objects.filter(project=project).order_by("-created")
 
     if request.method == "GET":
-        logform = ProjectLogForm()
+        logform = ProjectLogForm(project=project)
+    else:
+        logform = ProjectLogForm(request.POST)
+        if logform.is_valid():
+            log = logform.save(commit=False)
+            log.log_header = log.update_type
+            log.project = project
+            log.creator = request.user
+            log.save()
+
+            # edit project status based on status
+            if log.update_type == "scripting":
+                project.status = "Programming"
+            elif log.update_type == "testlinksent":
+                project.status = "Changes"
+            elif log.update_type == "settolive":
+                project.status = "Live"
+            elif log.update_type == "settolivechange":
+                project.status = "LiveChange"
+            elif log.update_type == "paused":
+                project.status = "Paused"
+            elif log.update_type == "toclosed":
+                project.status = "Closed"
+            elif log.update_type == "reopened":
+                project.status = "Live"
+
+            project.save()
+            logform = ProjectLogForm(project=project)
+            messages.success(request, "Log added succesfully")
 
     return render(request, "testfront/project.html", {
         "project": project,
@@ -193,3 +241,13 @@ def projectdel(request, project_code):
     else:
         project.delete()
         return redirect("projectall")
+    
+@login_required
+def deletelog(request):    
+    if request.method == "POST":
+        logid = request.POST.get('logid')
+        log = ProjectLog.objects.get(id=logid)
+        project = log.project
+        log.delete()
+
+        return redirect(project)

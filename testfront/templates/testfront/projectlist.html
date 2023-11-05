@@ -44,12 +44,13 @@
             <th class="align-middle" scope="row"><input class="form-check-input" type="checkbox" value=""></th>
             <td class="align-middle"><a href="{{ project.get_absolute_url }}" class="fw-bold text-decoration-none">{{project.ord}} - {{project.project_name}}</a></td>
             <td class="align-middle"><span class="badge rounded-pill 
-              {% if project.status == "Headsup" %} text-bg-secondary {% endif %}
+              {% if project.status == "Headsup" %} text-bg-info {% endif %}
               {% if project.status == "Programming" %} text-bg-primary {% endif %}
               {% if project.status == "Changes" or project.status == "LiveChange" %} text-bg-warning {% endif %}
               {% if project.status == "Live" %} text-bg-success {% endif %}
+              {% if project.status == "Paused" %} text-bg-secondary {% endif %}
               {% if project.status == "Closed" %} text-bg-danger {% endif %}
-            ">{{project.status|upper}}</span></td>
+            ">{{project.get_status_display|upper}}</span></td>
             
             <td class="align-middle">
               <div class="dropdown">

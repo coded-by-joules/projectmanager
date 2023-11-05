@@ -6,12 +6,13 @@
 {% block body %}
 <header>
     <h4><span class="text-truncate">{{project.ord}} - {{project.project_name}}</span> <span class="badge rounded-pill 
-        {% if project.status == "Headsup" %} text-bg-secondary {% endif %}
+        {% if project.status == "Headsup" %} text-bg-info {% endif %}
         {% if project.status == "Programming" %} text-bg-primary {% endif %}
         {% if project.status == "Changes" or project.status == "LiveChange" %} text-bg-warning {% endif %}
         {% if project.status == "Live" %} text-bg-success {% endif %}
+        {% if project.status == "Paused" %} text-bg-secondary {% endif %}
         {% if project.status == "Closed" %} text-bg-danger {% endif %}
-      ">{{project.status|upper}}</span></h4>
+      ">{{project.get_status_display|upper}}</span></h4>
 </header>
 
 <hr/>
@@ -60,7 +61,8 @@
         </div>
            
     </div>
-    <form class="col-lg-8 rounded shadow p-3 mt-lg-0 mt-sm-3 mb-3">
+    <form class="col-lg-8 rounded shadow p-3 mt-lg-0 mt-sm-3 mb-3" method="POST">
+        {% csrf_token %}
        <h5>Make an update</h5>
        <hr/>
        {{form.message}}
@@ -83,21 +85,36 @@
 </div>
 <div class="container mt-4">
     <h4 class="mb-4">Updates</h4>
+
+    {% if messages %}
+    <div class="alert alert-success mb-4" role="alert">      
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+    {% endif %}
+    </div>
     {% for log in logs %}
     <div class="card 
     
     {% if log.update_type == "update" %} text-bg-secondary {% endif %}
     {% if log.update_type == "scripting" %} text-bg-success {% endif %}
-    {% if log.update_type == "textlinksent" or log.update_type == "settolivechange" %} text-bg-warning {% endif %}
+    {% if log.update_type == "testlinksent" or log.update_type == "settolivechange" %} text-bg-warning {% endif %}
     {% if log.update_type == "settolive" or log.update_type == "toclosed" %} text-bg-danger {% endif %}
     {% if log.update_type == "paused" or log.update_type == "reopened" or log.update_type == "created" or log.update_type == "edited" %} text-bg-primary {% endif %}
 
     mb-4">
-        <div class="card-header">
-            {{log.get_update_type_display}}
+        <div class="card-header d-flex justify-content-between">
+            <div>{{log.get_update_type_display}}</div>
+            {% if log.creator == user or perms.api.delete_projectlog %}
+                <form action="{% url "deletelog" %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="logid" value="{{log.id}}" />
+                    <button type="submit" class="btn-close" aria-label="Close"></button>
+                </form>
+            {% endif %}
           </div>
         <div class="card-body">            
-          <h5 class="card-title">{{ log.log_header }}</h5>
+          <h5 class="card-title">{{log.creator.first_name}} {{log.creator.last_name}} {{ log.get_log_header_display }}</h5>
           {% if log.message %} <p class="card-text">{{log.message|safe}}</p> {% endif %}
         </div>
         <div class="card-footer">

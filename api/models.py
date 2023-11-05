@@ -27,6 +27,7 @@ class Project(models.Model):
      ("Changes","Changes"),
      ("Live", "Live"),
      ("LiveChange", "Live Changes"),
+     ("Paused", "Paused"),
      ("Closed", "Closed")
     ]
     REGION_CHOICES = [
@@ -96,9 +97,22 @@ class ProjectLog(models.Model):
       ("edited","Project details edited")
    ]
 
+   HEADER_CHOICES = [
+      ("update","posted an update"),
+      ("scripting","started scripting the project"),
+      ("testlinksent","sent the test link(s)"),
+      ("settolive","launched the study"),
+      ("settolivechange","made some live changes"),
+      ("paused","paused the study"),
+      ("toclosed","closed the study"),
+      ("reopened","reopened the study"),
+      ("created","created this project"),
+      ("edited","edited some details for this project")      
+   ]
+
    project = models.ForeignKey(Project, on_delete=models.CASCADE, to_field="code")
    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-   log_header = models.CharField(max_length=255, null=True, blank=True)
+   log_header = models.CharField(max_length=255, default="update", choices=HEADER_CHOICES)
    message = models.TextField(max_length=255, blank=True, null=True)   
    update_type = models.CharField(max_length=20, default="update", choices=UPDATE_CHOICES)
    created = models.DateTimeField(auto_now_add=True)
