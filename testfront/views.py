@@ -27,8 +27,8 @@ def search_project(search_key):
     return projects_list
 
 # paginator setup
-def paginator_setup(projects_list: Project, page_get):
-    project_pages = Paginator(projects_list.order_by("created_date"), 15)
+def paginator_setup(query_list, page_get, item_per_page=15):
+    project_pages = Paginator(query_list.order_by("created_date"), item_per_page)
     page_num = page_get
 
     if page_num >= project_pages.num_pages:
@@ -51,7 +51,7 @@ def paginator_setup(projects_list: Project, page_get):
         next_page = page_num + 1
 
     return {
-        "projects": project_page.object_list,
+        "items": project_page.object_list,
         "pages": range(min_page, max_page+1),
         "last": project_pages.num_pages,
         "current": project_page.number,
@@ -126,7 +126,7 @@ def mainpage(request):
 def projectview(request, project_ord):
     project = get_object_or_404(Project, ord=project_ord)
     creator = f"{project.creator.first_name} {project.creator.last_name}"
-    logs = ProjectLog.objects.filter(project=project).order_by("-created")
+    logs = ProjectLog.objects.filter(project=project).order_by("-created_date")
 
     if request.method == "GET":
         logform = ProjectLogForm(project=project)
@@ -159,11 +159,18 @@ def projectview(request, project_ord):
             logform = ProjectLogForm(project=project)
             messages.success(request, "Log added succesfully")
 
+    
+    page_num = 1
+    if "page" in request.GET:
+        if str(request.GET["page"]).isdigit():
+            page_num = int(request.GET["page"])
+    
+    paginator_result = paginator_setup(logs, page_num, 10)
     return render(request, "testfront/project.html", {
+        **paginator_result,
         "project": project,
         "creator": creator,
-        "form": logform,
-        "logs": logs
+        "form": logform
     })
 
 @login_required
@@ -245,9 +252,12 @@ def projectdel(request, project_code):
 @login_required
 def deletelog(request):    
     if request.method == "POST":
-        logid = request.POST.get('logid')
+        logid = request.POST['logid']
         log = ProjectLog.objects.get(id=logid)
-        project = log.project
-        log.delete()
+        if log.update_type == "update":
+            project = log.project
+            log.delete()
+        else:
+            return HttpResponseForbidden("Only update type logs are allowed")
 
         return redirect(project)

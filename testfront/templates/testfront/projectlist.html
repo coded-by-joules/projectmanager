@@ -28,7 +28,7 @@
       </div>
       {% endif %}
       <hr class="border-2 border-black opacity-100" />
-      {% if projects|length > 0 %}
+      {% if items|length > 0 %}
       <table class="table">
         <thead>
           <tr>
@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for project in projects %}
+          {% for project in items %}
           <tr>
             <th class="align-middle" scope="row"><input class="form-check-input" type="checkbox" value=""></th>
             <td class="align-middle"><a href="{{ project.get_absolute_url }}" class="fw-bold text-decoration-none">{{project.ord}} - {{project.project_name}}</a></td>
@@ -87,7 +87,7 @@
       {% endif %}
       {% endif %}
 
-      {% if projects|length == 0 %}
+      {% if items|length == 0 %}
       <div class="text-center">
         <h1>No projects</h1>
         <p>Refine your search, or click the "Add Project" button</p>

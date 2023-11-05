@@ -115,4 +115,4 @@ class ProjectLog(models.Model):
    log_header = models.CharField(max_length=255, default="update", choices=HEADER_CHOICES)
    message = models.TextField(max_length=255, blank=True, null=True)   
    update_type = models.CharField(max_length=20, default="update", choices=UPDATE_CHOICES)
-   created = models.DateTimeField(auto_now_add=True)
+   created_date = models.DateTimeField(auto_now_add=True)

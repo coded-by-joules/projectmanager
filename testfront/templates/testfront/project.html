@@ -84,7 +84,26 @@
     </form>
 </div>
 <div class="container mt-4">
-    <h4 class="mb-4">Updates</h4>
+    <div class="d-flex mb-4 justify-content-between">
+        <h4>Updates</h4>
+        {% if pages|length > 1 %}
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <li class="page-item {% if current == 1  %}disabled{%endif%}">
+              <a class="page-link" href="{% url "projectall" %}">First</a>
+            </li>
+            {% if showPrev %} <li class="page-item"><a class="page-link" href="?page={{prev_page}}">Previous</a></li> {% endif %}
+            {% for page in pages %}
+            <li class="page-item"><a class="page-link {% if current == page %} active {% endif %}" href="?page={{page}}">{{page}}</a></li>
+            {% endfor %}
+            {% if showNext %} <li class="page-item"><a class="page-link" href="?page={{next_page}}">Next</a></li> {% endif %}
+            <li class="page-item">
+              <a class="page-link {% if current == last %}disabled{%endif%}" href="?page={{last}}">Last</a>
+            </li>
+          </ul>
+        </nav>
+        {% endif %}        
+    </div>
 
     {% if messages %}
     <div class="alert alert-success mb-4" role="alert">      
@@ -93,7 +112,7 @@
     {% endfor %}
     {% endif %}
     </div>
-    {% for log in logs %}
+    {% for log in items %}
     <div class="card 
     
     {% if log.update_type == "update" %} text-bg-secondary {% endif %}
@@ -105,12 +124,14 @@
     mb-4">
         <div class="card-header d-flex justify-content-between">
             <div>{{log.get_update_type_display}}</div>
-            {% if log.creator == user or perms.api.delete_projectlog %}
+            {% if log.update_type == "update" %}
+               {% if log.creator == user or perms.api.delete_projectlog%}
                 <form action="{% url "deletelog" %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="logid" value="{{log.id}}" />
                     <button type="submit" class="btn-close" aria-label="Close"></button>
                 </form>
+                {% endif %}
             {% endif %}
           </div>
         <div class="card-body">            
@@ -118,7 +139,7 @@
           {% if log.message %} <p class="card-text">{{log.message|safe}}</p> {% endif %}
         </div>
         <div class="card-footer">
-            {{log.created}}
+            {{log.created_date}}
         </div>
     </div>  
     {% empty %}
