@@ -136,7 +136,11 @@
           </div>
         <div class="card-body">            
           <h5 class="card-title">{{log.creator.first_name}} {{log.creator.last_name}} {{ log.get_log_header_display }}</h5>
-          {% if log.message %} <p class="card-text">{{log.message|safe}}</p> {% endif %}
+          {% if log.message %} 
+            <p class="card-text">
+            {{log.message|linebreaks}}
+            </p>
+          {% endif %}
         </div>
         <div class="card-footer">
             {{log.created_date}}

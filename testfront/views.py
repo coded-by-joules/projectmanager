@@ -28,7 +28,7 @@ def search_project(search_key):
 
 # paginator setup
 def paginator_setup(query_list, page_get, item_per_page=15):
-    project_pages = Paginator(query_list.order_by("created_date"), item_per_page)
+    project_pages = Paginator(query_list.order_by("-created_date"), item_per_page)
     page_num = page_get
 
     if page_num >= project_pages.num_pages:
@@ -65,9 +65,9 @@ def paginator_setup(query_list, page_get, item_per_page=15):
 def addtolog(projectObj: Project, user: User, updates=[]):
     logCheck = ProjectLog.objects.filter(project=projectObj).count()
     if logCheck > 0:
-        messageStr = "The following details are edited:<br/><br/>"
+        messageStr = "The following details are edited:\n\n"
         for item in updates:            
-            messageStr += f"{item['key']}: {item['value']}<br/>"
+            messageStr += f"{item['key']}: {item['value']}\n"
         log = ProjectLog(
             project=projectObj,
             creator=user,
@@ -85,26 +85,6 @@ def addtolog(projectObj: Project, user: User, updates=[]):
     
     log.save()
         
-# get header when adding log
-def getHeader(status: str, user: User):
-    username = f"{user.first_name} {user.last_name}"
-    if status == "update":
-        return f"{username} posted an update"
-    elif status == "scripting":
-        return f"{username} started scripting the project"
-    elif status == "testlinksent":
-        return f"{username} sent the test link(s)"
-    elif status == "settolive":
-        return f"{username} launched the study"
-    elif status == "settolivechange":
-        return f"{username} made some live changes"
-    elif status == "paused":
-        return f"{username} paused the study"
-    elif status == "toclosed":
-        return f"{username} closed the study"
-    elif status == "reopened":
-        return f"{username} reopened the study"
-
 # Create your views here.
 @login_required
 def mainpage(request):
